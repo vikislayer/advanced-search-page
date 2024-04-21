@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="html" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	<script>
+		let selectedCategories = [];
+		let selectedCategoriesOrder =[];
+
+		function addToList() {
+			const selectElement = document.getElementById("sort_options");
+			const sortOrder = document.getElementById("sort_order");
+			if(selectElement.options.length != 0)
+			{
+				const selectedValue = selectElement.value;
+				const selectedValueTwo = sortOrder.value;
+				console.log(selectedValueTwo);
+				selectedCategories.push(selectedValue);
+				selectedCategoriesOrder.push(selectedValueTwo);
+
+				const listContainer = document.getElementById("selectedCategories");
+				const listItem = document.createElement("li");
+				if(sortOrder.value=="True")
+				{
+					listItem.textContent = selectedValue + " - Asc";
+				}
+				else
+				{
+					listItem.textContent = selectedValue + " - Desc";
+				}
+				listContainer.appendChild(listItem);
+				console.log(selectedCategories)
+				selectElement.remove(selectElement.selectedIndex);
+			}
+		}
+
+		document.addEventListener("DOMContentLoaded", function() {
+			document.getElementById("myForm").addEventListener("submit", function(event) {
+				const hiddenInput = document.createElement("input");
+				hiddenInput.type = "hidden";
+				hiddenInput.name = "selected_categories";
+				hiddenInput.value = JSON.stringify(selectedCategories);
+				this.appendChild(hiddenInput);
+
+				const orderHiddenInput = document.createElement("input");
+				orderHiddenInput.type = "hidden";
+				orderHiddenInput.name = "selected_categories_order";
+				orderHiddenInput.value = JSON.stringify(selectedCategoriesOrder);
+				this.appendChild(orderHiddenInput);
+			});
+		
+
+			var authorSearch = document.getElementById('search_author_tag');
+			var titleSearch = document.getElementById('search_titles_tag');
+			titleSearch.addEventListener('change', function() {
+				authorSearch.disabled = this.checked;
+			});
+			authorSearch.addEventListener('change', function() {
+				titleSearch.disabled = this.checked;
+			});
+
+		});
+	</script>
+    <title>Search Page</title>
+</head>
+<body>
+	<div class="header"><h1>Search Page</h1></div>
+    <div>
+		<form id="myForm" action="/search" method="POST">
+			<div class="search_box">
+				<input type="text" name="search" placeholder="Search...">
+				<button type="submit">Search</button>
+				<div>
+					<input type="checkbox" unchecked id="search_titles_tag" name="search_titles" value=1>
+					<label for="search_titles_tag"> Search titles only</label><br>
+					<input type="checkbox" unchecked id="search_author_tag" name="search_author" value=1>
+					<label for="search_author_tag"> Search author only</label><br>
+				</div>
+
+				<div>
+					<label for="greater_than_id">Created After:</label>
+					<input type="datetime-local" id="greater_than_id" name="greater_than" placeholder="Created After">
+					<label for="less_than_id">Created Before:</label>
+					<input type="datetime-local" id="less_than_id" name="less_than" placeholder="Created before">
+				</div>
+
+				<select name="sort_category" id="sort_options">
+					<option value='created_utc'>Date Created</option>
+					<option value="num_comments">Comment Amount</option>
+					<option value="ups">Up votes</option>
+					<option value="downs">Down votes</option>
+					<option value="upvote_ratio">Up vote Ratio</option>
+					<option value="score">Score</option>
+					<option value="num_crossposts">Crosspost Amount</option>
+					<option value="subreddit_subscribers">Subreddit subscriber count</option>
+				</select>
+				
+				<select name="ascending" id="sort_order">
+					<option value="True">Ascending</option>
+					<option value="False">Descending</option>
+				</select>
+				<button type="button" onclick="addToList()">Add to Sort</button>
+				<ul id="selectedCategories"></ul>
+				<div class="checkbox">
+					<div class="checkboxLabel">
+						<input type="checkbox" id="contest_mode_tag" name="contest_mode" value="1">
+						<label for="contest_mode_tag"> Contest Mode</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="brand_safe_tag" name="brand_safe" value="1">
+						<label for="brand_safe_tag"> Brand Safe</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="can_gild_tag" name="can_gild" value="1">
+						<label for="can_gild_tag"> Can Gild</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="hide_score_tag" name="hide_score" value="1">
+						<label for="hide_score_tag"> Score Hidden</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="is_crosspostable_tag" name="is_crosspostable" value="1">
+						<label for="is_crosspostable_tag"> Crosspostable</label><br>
+					</div>
+				</div>
+				<div class="checkbox">
+					<div class="checkboxLabel">
+						<input type="checkbox" id="is_reddit_media_domain_tag" name="is_reddit_media_domain" value="1">
+						<label for="is_reddit_media_domain_tag"> Reddit Media Domain</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="is_video_tag" name="is_video" value="1">
+						<label for="is_video_tag"> Video</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="locked_tag" name="locked" value="1">
+						<label for="locked_tag"> Locked</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="no_follow_tag" name="no_follow" value="1">
+						<label for="no_follow_tag"> No Followers</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="send_replies_tag" name="send_replies" value="1">
+						<label for="send_replies_tag"> Send Replies</label><br>
+					</div>
+				</div>
+				<div class="checkbox">
+					<div class="checkboxLabel">
+						<input type="checkbox" id="spoiler_tag" name="spoiler" value="1">
+						<label class= for="spoiler_tag"> Spoiler</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="stickied_tag" name="stickied" value="1">
+						<label class= for="stickied_tag"> Stickied</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="is_robot_indexable_tag" name="is_robot_indexable" value="1">
+						<label class= for="is_robot_indexable_tag"> Robot Indexible</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="allow_live_comments_tag" name="allow_live_comments" value="1">
+						<label class= for="allow_live_comments_tag"> Send Replies</label>
+					</div>
+					<div class="checkboxLabel">
+						<input type="checkbox" id="author_premium_tag" name="author_premium" value="1">
+						<label  for="author_premium_tag"> Author Premium</label><br>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+		</form>
+	</div>
+</body>
+</html>

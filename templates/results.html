@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html class="html" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Search Results</title>
+</head>
+<body>
+    <div class="header"><h1>Keyword search for {{ search_query }}</h1></div>
+    <ul>author == Date Created == Comment Count == Link</ul>
+    <ol>
+        {% for result in results[:100] %}
+            <div>
+                <li>{{ result.author }} == {{ result.created_utc }} == {{ result.num_comments }} == <a href={{result.url}}>Link:</a> {{result.url}} == {{result.contest_mode}}== {{result.spoiler}}</li>
+                <!-- <li>{{ result }}</li>  -->
+            </div>
+        {% endfor %}
+    </ol>
+</body>
+</html>
